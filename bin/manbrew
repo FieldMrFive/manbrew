@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import logging
+import os
+import argparse
+import sys
+
+manbrew_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, manbrew_root)
+
+from core import LinkManager
+
+
+def link(args, manager):
+    manager.link(container=args.Container,
+                 src_path=os.path.join(manbrew_root, "Containers", args.Container),
+                 dst_path=os.path.join(manbrew_root, "usr/local"))
+
+
+def unlink(args, manager):
+    manager.unlink(container=args.Container)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Manage manually installed libraries.")
+    parser.add_argument("--log", type=str, default="INFO",
+                        help="logging level.")
+    subparsers = parser.add_subparsers(title="subcommands",
+                                       description="valid subcommands",
+                                       help="Use 'manbrew subcommand --help' to see more helps.")
+    parser_link = subparsers.add_parser("link", help="link container.")
+    parser_link.add_argument("Container", type=str,
+                             help="the container to link.")
+    parser_link.set_defaults(func=link)
+
+    parser_unlink = subparsers.add_parser("unlink", help="unlink container.")
+    parser_unlink.add_argument("Container", type=str,
+                               help="the container to unlink.")
+    parser_unlink.set_defaults(func=unlink)
+
+    args = parser.parse_args()
+
+    log_level = getattr(logging, args.log.upper(), logging.INFO)
+    logger = logging.getLogger("manbrew")
+    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s : %(message)s"))
+    logger.addHandler(console_handler)
+
+    manager = LinkManager(record_filename=os.path.join(manbrew_root, "Containers/.record.yaml"),
+                          logger=logger)
+    args.func(args, manager)
