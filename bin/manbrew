@@ -4,6 +4,7 @@ import logging
 import os
 import argparse
 import sys
+import shutil
 
 manbrew_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, manbrew_root)
@@ -11,32 +12,92 @@ sys.path.insert(0, manbrew_root)
 from core import LinkManager
 
 
-def link(args, manager):
-    manager.link(container=args.Container,
-                 src_path=os.path.join(manbrew_root, "Containers", args.Container),
-                 dst_path=os.path.join(manbrew_root, "usr/local"))
+def link(*args, **kwargs):
+    app_args = kwargs['app_args']
+    manager = kwargs['manager']
+    logger = kwargs['logger']
+    src_path = os.path.join(manbrew_root, "containers", app_args.Container)
+    if not os.path.exists(src_path):
+        logger.warning("container %s not exists.", app_args.Container)
+        return
+    manager.link(container=app_args.Container,
+                 src_path=src_path,
+                 dst_path=app_args.dst)
 
 
-def unlink(args, manager):
-    manager.unlink(container=args.Container)
+def unlink(*args, **kwargs):
+    app_args = kwargs['app_args']
+    manager = kwargs['manager']
+    manager.unlink(container=app_args.Container)
+
+
+def remove(*args, **kwargs):
+    app_args = kwargs['app_args']
+    manager = kwargs['manager']
+    logger = kwargs['logger']
+    if manager.container_linked(app_args.Container):
+        manager.unlink(container=app_args.Container)
+
+    rm_dir = os.path.join(manbrew_root, "containers", app_args.Container)
+    if os.path.exists(rm_dir):
+        logger.info("remove dir: %s", rm_dir)
+        shutil.rmtree(rm_dir)
+    else:
+        logger.warning("%s not exists.", rm_dir)
+
+
+def list_func(*args, **kwargs):
+    manager = kwargs['manager']
+    logger = kwargs['logger']
+    container_dir = os.path.join(manbrew_root, "containers")
+    message = "List all containers\n"
+    containers = []
+    for container in os.listdir(container_dir):
+        if not os.path.isdir(os.path.join(container_dir, container)):
+            continue
+        message += "%s" + (": linked\n" if manager.container_linked(container) else ": not linked\n")
+        containers.append(container)
+    logger.info(message, *containers)
+
+def root(*args, **kwargs):
+    print(manbrew_root)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage manually installed libraries.")
     parser.add_argument("--log", type=str, default="INFO",
                         help="logging level.")
+
+    # subcommand link
     subparsers = parser.add_subparsers(title="subcommands",
                                        description="valid subcommands",
                                        help="Use 'manbrew subcommand --help' to see more helps.")
     parser_link = subparsers.add_parser("link", help="link container.")
     parser_link.add_argument("Container", type=str,
                              help="the container to link.")
+    parser_link.add_argument("--dst", type=str, default="/usr/local",
+                             help="path where symbol links go, just use '/usr/local'.")
     parser_link.set_defaults(func=link)
 
+    # subcommand unlink
     parser_unlink = subparsers.add_parser("unlink", help="unlink container.")
     parser_unlink.add_argument("Container", type=str,
                                help="the container to unlink.")
     parser_unlink.set_defaults(func=unlink)
+
+    # subcommand remove
+    parser_remove = subparsers.add_parser("remove", help="remove container.")
+    parser_remove.add_argument("Container", type=str,
+                               help="the container to remove.")
+    parser_remove.set_defaults(func=remove)
+
+    # subcommand list
+    parser_list = subparsers.add_parser("list", help="list containers' state.")
+    parser_list.set_defaults(func=list_func)
+
+    # subcommand root
+    parser_root = subparsers.add_parser("root", help="print manbrew root.")
+    parser_root.set_defaults(func=root)
 
     args = parser.parse_args()
 
@@ -50,4 +111,4 @@ if __name__ == "__main__":
 
     manager = LinkManager(record_filename=os.path.join(manbrew_root, "Containers/.record.yaml"),
                           logger=logger)
-    args.func(args, manager)
+    args.func(app_args=args, manager=manager, logger=logger)

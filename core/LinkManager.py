@@ -13,6 +13,7 @@ class LinkManager(object):
         else:
             with open(self.record_filename, "r") as fin:
                 self.record = yaml.load(fin)
+            self.record = {} if self.record is None else self.record
         self.new_record = []
 
     def resolve_all_link(self, src_path, dst_path):
@@ -29,7 +30,7 @@ class LinkManager(object):
                                       os.path.join(dst_path, target))
 
     def link(self, container, src_path, dst_path):
-        if container in self.record:
+        if self.container_linked(container):
             self.logger.warning("container %s already linked.", container)
             return
 
@@ -49,7 +50,7 @@ class LinkManager(object):
         self.record[container] = self.new_record
 
     def unlink(self, container):
-        if container not in self.record:
+        if not self.container_linked(container):
             self.logger.warning("container %s not linked.", container)
             return
         self.remove_link(self.record[container])
@@ -61,9 +62,14 @@ class LinkManager(object):
 
     def remove_link(self, links):
         for link in links:
-            self.logger.info("rm %s", link)
+            self.logger.info("unlink %s", link)
             os.remove(link)
 
     def make_link(self, src, dst):
         os.symlink(src, dst)
         self.logger.info("link %s", dst)
+
+    def container_linked(self, container):
+        if self.record is None:
+            return False
+        return container in self.record
