@@ -58,7 +58,7 @@ class LinkManager(object):
 
     def __del__(self):
         with open(self.record_filename, "w") as fout:
-            self.record = yaml.dump(self.record, fout, default_flow_style=False)
+            self.record = yaml.dump(self.record, fout)
 
     def remove_link(self, links):
         for link in links:
