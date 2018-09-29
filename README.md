@@ -7,7 +7,7 @@ I write this in case of
 * Do not want to **`sudo`**`make install` anything.
 * Want Homebrew style clean _symbol link_ management.
 
-#Install
+# Install
 ## Dependencies
 1. Homebrew
 2. brew install _cmake python@2_
