@@ -2,7 +2,7 @@ Manbrew
 ===============
 Manage manually installed (C++) libraries (for cmake) along with Homebrew in OSX.<br/>
 I write this in case of
-* Homebrew does not have the Formula.
+* Homebrew does not have the Formula and do not want to make a Formula or Tap.
 * Homebrew Formula does not have the desired options and do not want to modify Formula.
 * Do not want to **`sudo`**`make install` anything.
 * Want Homebrew style clean _symbol link_ management.
