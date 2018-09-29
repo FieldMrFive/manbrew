@@ -18,7 +18,7 @@ all_args = [
 
             # subcommand unlink
             {"name": "unlink",
-             "help": "unlink_container.",
+             "help": "unlink container.",
              "args": [{"str": "container",
                        "kwargs": {"type": str,
                                   "help": "the container to unlink."}}]},
