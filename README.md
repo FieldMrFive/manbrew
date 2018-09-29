@@ -22,7 +22,7 @@ Put `{manbrew_install_path}/bin` to your `PATH`, e.g:
     
     echo "export PATH=$HOME/.manbrew/bin:$PATH" >> ~/.bashrc
 
-#Usage
+# Usage
 Build the library from source with _install prefix_ set to `{manbrew_install_path}/containers/{library_name}` e.g:
 
     cmake -DCMAKE_INSTALL_PREFIX=`manbrew root`/containers/opencv ..
