@@ -52,7 +52,7 @@ class LinkManager(object):
         except RuntimeError:
             self.remove_link(self.new_record)
             raise
-
+        self.logger.info("%s linked.", Font.BOLD(container))
         self.record[container] = self.new_record
 
     def unlink(self, container):
@@ -60,8 +60,9 @@ class LinkManager(object):
             self.logger.warning("%s not linked.", Font.BOLD(container))
             return
 
-        self.logger.info("linking %s", Font.BOLD(container))
+        self.logger.info("unlink %s", Font.BOLD(container))
         self.remove_link(self.record[container])
+        self.logger.info("%s unlinked.", Font.BOLD(container))
         del self.record[container]
 
     def remove_link(self, links):
