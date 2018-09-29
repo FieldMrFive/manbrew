@@ -18,7 +18,7 @@ Clone the repository to wherever you like, e.g:
 
     git clone https://github.com/FieldMrFive/manbrew.git ~/.manbrew
 
-Put `{manbrew_install_path}/bin` to your `PATH`, e.g:
+Put `{manbrew_install_path}/bin` to your `PATH`, or link the `{manbrew_install_path}/bin/manbrew` to wherever under your `PATH`, e.g:
     
     echo "export PATH=$HOME/.manbrew/bin:$PATH" >> ~/.bashrc
 
@@ -32,3 +32,11 @@ Then `manbrew link {library_name}`, e.g:
     manbrew link opencv
 
 All done.
+## Subcommands
+Subcommand | Description
+---------- | -----------
+link       | link container
+unlink     | unlink container
+remove     | remove container
+list       | list all containers
+root       | print manbrew install path
