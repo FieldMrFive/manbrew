@@ -2,53 +2,15 @@
 
 import logging
 import os
-import argparse
 import sys
 
 manbrew_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, manbrew_root)
 
-from core import *
+from core import ArgParser, LinkManager
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Manage manually installed libraries.")
-    parser.add_argument("--log", type=str, default="INFO",
-                        help="logging level.")
-
-    # subcommand link
-    subparsers = parser.add_subparsers(title="subcommands",
-                                       description="valid subcommands",
-                                       help="Use 'manbrew subcommand --help' to see more helps.")
-    parser_link = subparsers.add_parser("link", help="link container.")
-    parser_link.add_argument("Container", type=str,
-                             help="the container to link.")
-    parser_link.add_argument("--dst", type=str, default="/usr/local",
-                             help="path where symbol links go, just use '/usr/local'.")
-    parser_link.set_defaults(func=link)
-
-    # subcommand unlink
-    parser_unlink = subparsers.add_parser("unlink", help="unlink container.")
-    parser_unlink.add_argument("Container", type=str,
-                               help="the container to unlink.")
-    parser_unlink.set_defaults(func=unlink)
-
-    # subcommand remove
-    parser_remove = subparsers.add_parser("remove", help="remove container.")
-    parser_remove.add_argument("Container", type=str,
-                               help="the container to remove.")
-    parser_remove.set_defaults(func=remove)
-
-    # subcommand list
-    parser_list = subparsers.add_parser("list", help="list containers' state.")
-    parser_list.set_defaults(func=list_func)
-
-    # subcommand root
-    parser_root = subparsers.add_parser("root", help="print manbrew root.")
-    parser_root.set_defaults(func=root)
-
-    args = parser.parse_args()
-
+def main(args):
     log_level = getattr(logging, args.log.upper(), logging.INFO)
     logger = logging.getLogger("manbrew")
     logger.setLevel(logging.DEBUG)
@@ -63,4 +25,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(ArgParser().parse())

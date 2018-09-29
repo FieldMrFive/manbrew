@@ -1,5 +1,6 @@
 import yaml
 import os
+from core import Font
 
 __all__ = ["LinkManager"]
 
@@ -16,6 +17,10 @@ class LinkManager(object):
             self.record = {} if self.record is None else self.record
         self.new_record = []
 
+    def __del__(self):
+        with open(self.record_filename, "w") as fout:
+            self.record = yaml.dump(self.record, fout)
+
     def resolve_all_link(self, src_path, dst_path):
         if os.path.isfile(src_path) or os.path.islink(dst_path):
             raise RuntimeError("%s exists. Clean dir or brew unlink first." % dst_path)
@@ -31,11 +36,12 @@ class LinkManager(object):
 
     def link(self, container, src_path, dst_path):
         if self.container_linked(container):
-            self.logger.warning("container %s already linked.", container)
+            self.logger.warning("%s already linked.", Font.BOLD(container))
             return
 
         self.new_record = []
 
+        self.logger.info("link %s", Font.BOLD(container))
         try:
             self.resolve_all_link(src_path, dst_path)
             opt_link = os.path.join(dst_path, "opt", container)
@@ -51,14 +57,12 @@ class LinkManager(object):
 
     def unlink(self, container):
         if not self.container_linked(container):
-            self.logger.warning("container %s not linked.", container)
+            self.logger.warning("%s not linked.", Font.BOLD(container))
             return
+
+        self.logger.info("linking %s", Font.BOLD(container))
         self.remove_link(self.record[container])
         del self.record[container]
-
-    def __del__(self):
-        with open(self.record_filename, "w") as fout:
-            self.record = yaml.dump(self.record, fout)
 
     def remove_link(self, links):
         for link in links:
