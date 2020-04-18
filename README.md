@@ -10,21 +10,19 @@ I write this in case of
 
 # Install
 ## Dependencies
-1. Homebrew
-2. brew install _cmake python@2_
-3. pip install _pyyaml_
+Python 3.6+
 
 ## Download
 Clone the repository to wherever you like, e.g:
 
-    git clone https://github.com/FieldMrFive/manbrew.git ~/.manbrew
+    git clone https://github.com/KuangyeChen/manbrew.git ~/.Manbrew
 
-Put `{manbrew_install_path}/bin` to your `PATH`, or link the `{manbrew_install_path}/bin/manbrew` to wherever under your `PATH`, e.g:
+Link the `{manbrew_install_path}/manbrew` to wherever under your `PATH`, e.g:
     
-    echo "export PATH=$HOME/.manbrew/bin:$PATH" >> ~/.bashrc
+    ln -s ~/.Manbrew/manbrew /usr/local/bin/manbrew
 
 # Usage
-Build the library from source with _install prefix_ set to `{manbrew_install_path}/containers/{library_name}` e.g:
+Build the library from source with _install prefix_ set to `{manbrew_install_path}/Containers/{library_name}` e.g:
 
     cmake -DCMAKE_INSTALL_PREFIX=`manbrew root`/containers/opencv ..
 
@@ -40,4 +38,4 @@ link       | link container
 unlink     | unlink container
 remove     | remove container
 list       | list all containers
-root       | print manbrew install path
+root       | print manbrew root path

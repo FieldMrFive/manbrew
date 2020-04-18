@@ -1,26 +1,27 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import logging
 import os
 import sys
 
-manbrew_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, manbrew_root)
-
-from core import ArgParser, LinkManager
+from core import ArgParser, LinkManager, make_directory_tree
 
 
 def main(args):
     log_level = getattr(logging, args.log.upper(), logging.INFO)
-    logger = logging.getLogger("manbrew")
-    logger.setLevel(logging.DEBUG)
+    logger = logging.getLogger("Manbrew")
+    logger.setLevel(log_level)
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(log_level)
     console_handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s : %(message)s"))
     logger.addHandler(console_handler)
 
-    manager = LinkManager(record_filename=os.path.join(manbrew_root, "Containers/.record.yaml"),
-                          logger=logger)
+    manbrew_root = os.environ.get('MANBREW_ROOT', os.path.expanduser('~/.Manbrew'))
+    make_directory_tree(manbrew_root)
+
+    manager = LinkManager(
+        record_file=os.path.join(manbrew_root, "Containers/.record.json"),
+        logger=logger)
     args.func(app_args=args, manager=manager, logger=logger, manbrew_root=manbrew_root)
 
 

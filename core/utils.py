@@ -1,20 +1,31 @@
-__all__ = ["Font"]
+import os
+
+__all__ = [
+    'TextStyle',
+    'make_directory_tree'
+]
 
 
-class Font(object):
-    CODE = {"PURPLE": "\033[95m",
-            "CYAN": "\033[96m",
-            "DARKCYAN": "\033[36m",
-            "BLUE": "\033[94m",
-            "GREEN": "\033[92m",
-            "YELLOW": "\033[93m",
-            "RED": "\033[91m",
-            "BOLD": "\033[1m",
-            "UNDERLINE": "\033[4m"}
-    END = "\033[0m"
+class TextStyle(object):
+    _BOLD = '\033[1m'
+    _PURPLE = '\033[95m'
+    _CYAN = '\033[96m'
+    _DARKCYAN = '\033[36m'
+    _BLUE = '\033[94m'
+    _GREEN = '\033[92m'
+    _YELLOW = '\033[93m'
+    _RED = '\033[91m'
+    _UNDERLINE = '\033[4m'
+    _END = '\033[0m'
+
+    @staticmethod
+    def bold(string):
+        return TextStyle._BOLD + string + TextStyle._END
+
+    @staticmethod
+    def red(string):
+        return TextStyle._RED + string + TextStyle._END
 
 
-for code in Font.CODE.iterkeys():
-    def code_func(string):
-        return Font.CODE[code] + string + Font.END
-    setattr(Font, code, staticmethod(code_func))
+def make_directory_tree(manbrew_root):
+    os.makedirs(os.path.join(manbrew_root, 'Containers'), exist_ok=True)
