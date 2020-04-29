@@ -14,7 +14,7 @@ __all__ = [
 
 def container_exist(**kwargs):
     app_args, logger, manbrew_root = kwargs['app_args'], kwargs['logger'], kwargs['manbrew_root']
-    container_path = os.path.join(manbrew_root, "containers", app_args.container)
+    container_path = os.path.join(manbrew_root, "Containers", app_args.container)
     if not os.path.exists(container_path):
         logger.warning("%s does not exist.", TextStyle.bold(app_args.container))
         return False
@@ -28,7 +28,7 @@ def link_command(**kwargs):
     app_args, manager, logger, manbrew_root = (
         kwargs['app_args'], kwargs['manager'], kwargs['logger'], kwargs['manbrew_root'])
 
-    src_path = os.path.join(manbrew_root, "containers", app_args.container)
+    src_path = os.path.join(manbrew_root, "Containers", app_args.container)
     manager.link(container=app_args.container, src_path=src_path, dst_path=app_args.dst)
 
 
@@ -50,7 +50,7 @@ def remove_command(**kwargs):
     if manager.container_linked(app_args.container):
         manager.unlink(container=app_args.container)
 
-    rm_dir = os.path.join(manbrew_root, "containers", app_args.container)
+    rm_dir = os.path.join(manbrew_root, "Containers", app_args.container)
     if os.path.exists(rm_dir):
         logger.info("remove dir: %s", rm_dir)
         shutil.rmtree(rm_dir)
@@ -59,7 +59,7 @@ def remove_command(**kwargs):
 
 def list_command(**kwargs):
     manager, logger, manbrew_root = kwargs['manager'], kwargs['logger'], kwargs['manbrew_root']
-    container_dir = os.path.join(manbrew_root, "containers")
+    container_dir = os.path.join(manbrew_root, "Containers")
     message = "List All Containers\n"
     containers = []
     for container in os.listdir(container_dir):
